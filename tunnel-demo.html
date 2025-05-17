@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Demo</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import * as THREE from 'three';
+    import { mesh, tubePoints } from '/src/demo/tunnel.js';
+
+    const scene = new THREE.Scene();
+    scene.add(mesh);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 窗口自适应
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    let i = 0;
+    function animate() {
+      if (i < tubePoints.length - 1) {
+        camera.position.copy(tubePoints[i]);
+        camera.lookAt(tubePoints[i + 1]);
+      } else {
+        i = 0;
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowDown') {
+        i += 10;
+      }
+    });
+
+    animate();
+  </script>
+</body>
+</html>
